@@ -5,11 +5,13 @@
 ## AARRR
 
 * [Введение](aarrr/vvedenie.md)
+* [Retention](aarrr/retention.md)
 
 ## HEART
 
 * [Введение](heart/vvedenie/README.md)
   * [Engagement](heart/vvedenie/engagement.md)
+* [Sessionization](heart/sessionization.md)
 
 ## Business
 
