@@ -16,4 +16,5 @@ description: Acquisition-Activation-Retention-Referral-Revenue
 
 {% embed url="https://vc.ru/marketing/32256-privlech-polzovatelya-i-zarabotat-na-nem-effektivnost-marketingovoy-voronki-aarrr-na-primere-tinder" %}
 
-****
+\*\*\*\*
+

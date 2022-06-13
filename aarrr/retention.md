@@ -6,7 +6,7 @@ description: Разные виды
 
 Retention N-дня
 
-```text
+```
 SELECT distinct user_id 
 	from
 		(
@@ -32,7 +32,7 @@ where ptn_date  =  (min_date + 2)
 
 или так:
 
-```text
+```
 select
 	count(user_id)
 from 
@@ -70,3 +70,46 @@ from
 where cnt = 2
 ```
 
+
+
+
+
+Массивы
+
+
+
+```
+select 
+       segment,
+       grade_id,
+       count(student_id) AS day_0,
+       countIf(arrayExists(x -> x = 1, days)) as day_1,
+       countIf(arrayExists(x -> x >= 1, days)) as day_1_and_more
+    from (
+          select * from 
+             (--смотрим дни захода
+                 select 
+                        segment,
+                        student_id,
+                        grade_id,
+                        arrayCumSum(arrayDifference(arraySort(groupUniqArray(toUnixTimestamp(ptn_date))))) as days
+                 from uchi.sessions s 
+                 where ptn_date between %(start_date)s and %(final_date)s
+                 --and grade_id = 1847
+                 group by segment, student_id, grade_id
+            ) sess
+          inner join 
+            (-- cмотрим студентов
+                select 
+                      student_id, 
+                      grade_id, 
+                      min(ptn_date) as min_date
+                from uchi.sessions s
+                --where grade_id = 1847
+                group by student_id, grade_id
+                having min_date >= %(start_date)s
+             ) studs
+                   using student_id, grade_id 
+        )
+group by segment, grade_id
+```
