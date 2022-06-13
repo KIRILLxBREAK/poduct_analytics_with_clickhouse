@@ -70,6 +70,53 @@ from
 where cnt = 2
 ```
 
+### Через массивы
+
+```
+select
+    reg_date,
+    is_completed,
+    sum(r[1]) N,
+    sum(r[2]) one_day,
+    sum(r[3]) three_day,
+    sum(r[4]) week,
+    sum(r[6]) two_weeks,
+    sum(r[6]) days_30,
+    sum(r[7]) days_60,
+    sum(r[8]) days_90,
+    sum(r[9]) days_180
+FROM 
+    (
+	select 
+            user_id,
+            reg_date,
+            is_completed,
+            retention(res = 0,
+		    	res = 1,
+		        res = 3,
+		        res = 7,
+		        res = 14,
+		        res = 30,
+		        res = 60,
+		        res = 90,
+		        res = 180) r       
+		from 
+		(
+			select
+				user_id,
+				min(ptn_date) as reg_date,
+				arraySort( groupUniqArray(ptn_date) ) as dates,
+				arrayFilter( x -> x in (0,1,3,7,14,30,60,90,180), arrayMap(x -> (x - reg_date), dates) ) as res
+			from uchi.page_events pe
+			where ptn_date >= '2021-01-18'
+			group by user_id
+			having reg_date between <Parameters.Parameter Start Date> and <Parameters.Parameter End Date>
+--			having reg_date between '2021-02-01' and '2021-04-01'
+		) ARRAY JOIN res
+		GROUP BY user_id, reg_date, is_completed
+group by reg_date, is_completed
+```
+
 
 
 
